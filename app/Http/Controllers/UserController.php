@@ -24,23 +24,33 @@ class UserController extends Controller
                 "msg" => "Data not Entered Properly",
             ]);
         } else {
-            $user = new User();
 
-            $user->email = $request->email;
-            $user->name = $request->name;
-            $user->phone = $request->phone;
-            $user->password = $request->password;
-            $user->type = "user";
-            $user->forgetOtp = "0000";
-            if ($user->save()) {
+            $existingUser = User::where("email", $request->email)->first();
+
+            if (!$existingUser) {
                 return response()->json([
-                    "msg" => "Signup Successfull"
+                    "msg" => "User Already Exists",
                 ]);
             } else {
-                return response()->json([
-                    "msg" => "Something Went wrong"
-                ]);
 
+                $user = new User();
+
+                $user->email = $request->email;
+                $user->name = $request->name;
+                $user->phone = $request->phone;
+                $user->password = $request->password;
+                $user->type = "user";
+                $user->forgetOtp = "0000";
+                if ($user->save()) {
+                    return response()->json([
+                        "msg" => "Signup Successfull"
+                    ]);
+                } else {
+                    return response()->json([
+                        "msg" => "Something Went wrong"
+                    ]);
+
+                }
             }
 
 
